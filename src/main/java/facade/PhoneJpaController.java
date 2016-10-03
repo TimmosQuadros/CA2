@@ -40,7 +40,7 @@ public class PhoneJpaController implements Serializable {
             em.getTransaction().begin();
             Infoentity infoEntityidInfoEntity = phone.getInfoEntityidInfoEntity();
             if (infoEntityidInfoEntity != null) {
-                infoEntityidInfoEntity = em.getReference(infoEntityidInfoEntity.getClass(), infoEntityidInfoEntity.getInfoentityPK());
+                infoEntityidInfoEntity = em.getReference(infoEntityidInfoEntity.getClass(), infoEntityidInfoEntity.getId());
                 phone.setInfoEntityidInfoEntity(infoEntityidInfoEntity);
             }
             em.persist(phone);
@@ -70,7 +70,7 @@ public class PhoneJpaController implements Serializable {
             Infoentity infoEntityidInfoEntityOld = persistentPhone.getInfoEntityidInfoEntity();
             Infoentity infoEntityidInfoEntityNew = phone.getInfoEntityidInfoEntity();
             if (infoEntityidInfoEntityNew != null) {
-                infoEntityidInfoEntityNew = em.getReference(infoEntityidInfoEntityNew.getClass(), infoEntityidInfoEntityNew.getInfoentityPK());
+                infoEntityidInfoEntityNew = em.getReference(infoEntityidInfoEntityNew.getClass(), infoEntityidInfoEntityNew.getId());
                 phone.setInfoEntityidInfoEntity(infoEntityidInfoEntityNew);
             }
             phone = em.merge(phone);

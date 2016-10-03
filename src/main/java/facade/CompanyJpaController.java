@@ -5,18 +5,22 @@
  */
 package facade;
 
-import entity.Company;
 import java.io.Serializable;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import entity.Infoentity;
+import entity.Person;
+import entity.Company;
+import entity.Address;
+import entity.Hobby;
+import java.util.ArrayList;
+import java.util.Collection;
+import entity.Phone;
 import facade.exceptions.IllegalOrphanException;
 import facade.exceptions.NonexistentEntityException;
 import facade.exceptions.PreexistingEntityException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -36,33 +40,106 @@ public class CompanyJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(Company company) throws PreexistingEntityException, Exception {
-        if (company.getInfoentityCollection() == null) {
-            company.setInfoentityCollection(new ArrayList<Infoentity>());
+    public void create(Company company) throws IllegalOrphanException, PreexistingEntityException, Exception {
+        if (company.getHobbyCollection() == null) {
+            company.setHobbyCollection(new ArrayList<Hobby>());
+        }
+        if (company.getPhoneCollection() == null) {
+            company.setPhoneCollection(new ArrayList<Phone>());
+        }
+        List<String> illegalOrphanMessages = null;
+        Infoentity infoentityOrphanCheck = company.getInfoentity();
+        if (infoentityOrphanCheck != null) {
+            Company oldCompanyOfInfoentity = infoentityOrphanCheck.getCompany();
+            if (oldCompanyOfInfoentity != null) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("The Infoentity " + infoentityOrphanCheck + " already has an item of type Company whose infoentity column cannot be null. Please make another selection for the infoentity field.");
+            }
+        }
+        if (illegalOrphanMessages != null) {
+            throw new IllegalOrphanException(illegalOrphanMessages);
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Collection<Infoentity> attachedInfoentityCollection = new ArrayList<Infoentity>();
-            for (Infoentity infoentityCollectionInfoentityToAttach : company.getInfoentityCollection()) {
-                infoentityCollectionInfoentityToAttach = em.getReference(infoentityCollectionInfoentityToAttach.getClass(), infoentityCollectionInfoentityToAttach.getInfoentityPK());
-                attachedInfoentityCollection.add(infoentityCollectionInfoentityToAttach);
+            Infoentity infoentity = company.getInfoentity();
+            if (infoentity != null) {
+                infoentity = em.getReference(infoentity.getClass(), infoentity.getId());
+                company.setInfoentity(infoentity);
             }
-            company.setInfoentityCollection(attachedInfoentityCollection);
+            Person person = company.getPerson();
+            if (person != null) {
+                person = em.getReference(person.getClass(), person.getId());
+                company.setPerson(person);
+            }
+            Company companyRel = company.getCompany();
+            if (companyRel != null) {
+                companyRel = em.getReference(companyRel.getClass(), companyRel.getId());
+                company.setCompany(companyRel);
+            }
+            Address addressidAddress = company.getAddressidAddress();
+            if (addressidAddress != null) {
+                addressidAddress = em.getReference(addressidAddress.getClass(), addressidAddress.getIdAddress());
+                company.setAddressidAddress(addressidAddress);
+            }
+            Collection<Hobby> attachedHobbyCollection = new ArrayList<Hobby>();
+            for (Hobby hobbyCollectionHobbyToAttach : company.getHobbyCollection()) {
+                hobbyCollectionHobbyToAttach = em.getReference(hobbyCollectionHobbyToAttach.getClass(), hobbyCollectionHobbyToAttach.getIdHobby());
+                attachedHobbyCollection.add(hobbyCollectionHobbyToAttach);
+            }
+            company.setHobbyCollection(attachedHobbyCollection);
+            Collection<Phone> attachedPhoneCollection = new ArrayList<Phone>();
+            for (Phone phoneCollectionPhoneToAttach : company.getPhoneCollection()) {
+                phoneCollectionPhoneToAttach = em.getReference(phoneCollectionPhoneToAttach.getClass(), phoneCollectionPhoneToAttach.getIdPhone());
+                attachedPhoneCollection.add(phoneCollectionPhoneToAttach);
+            }
+            company.setPhoneCollection(attachedPhoneCollection);
             em.persist(company);
-            for (Infoentity infoentityCollectionInfoentity : company.getInfoentityCollection()) {
-                Company oldCompanyOfInfoentityCollectionInfoentity = infoentityCollectionInfoentity.getCompany();
-                infoentityCollectionInfoentity.setCompany(company);
-                infoentityCollectionInfoentity = em.merge(infoentityCollectionInfoentity);
-                if (oldCompanyOfInfoentityCollectionInfoentity != null) {
-                    oldCompanyOfInfoentityCollectionInfoentity.getInfoentityCollection().remove(infoentityCollectionInfoentity);
-                    oldCompanyOfInfoentityCollectionInfoentity = em.merge(oldCompanyOfInfoentityCollectionInfoentity);
+            if (infoentity != null) {
+                infoentity.setCompany(company);
+                infoentity = em.merge(infoentity);
+            }
+            if (person != null) {
+                entity.Infoentity oldInfoentityOfPerson = person.getInfoentity();
+                if (oldInfoentityOfPerson != null) {
+                    oldInfoentityOfPerson.setPerson(null);
+                    oldInfoentityOfPerson = em.merge(oldInfoentityOfPerson);
+                }
+                person.setInfoentity(company);
+                person = em.merge(person);
+            }
+            if (companyRel != null) {
+                entity.Infoentity oldInfoentityOfCompanyRel = companyRel.getInfoentity();
+                if (oldInfoentityOfCompanyRel != null) {
+                    oldInfoentityOfCompanyRel.setCompany(null);
+                    oldInfoentityOfCompanyRel = em.merge(oldInfoentityOfCompanyRel);
+                }
+                companyRel.setInfoentity(company);
+                companyRel = em.merge(companyRel);
+            }
+            if (addressidAddress != null) {
+                addressidAddress.getInfoentityCollection().add(company);
+                addressidAddress = em.merge(addressidAddress);
+            }
+            for (Hobby hobbyCollectionHobby : company.getHobbyCollection()) {
+                hobbyCollectionHobby.getInfoentityCollection().add(company);
+                hobbyCollectionHobby = em.merge(hobbyCollectionHobby);
+            }
+            for (Phone phoneCollectionPhone : company.getPhoneCollection()) {
+                entity.Infoentity oldInfoEntityidInfoEntityOfPhoneCollectionPhone = phoneCollectionPhone.getInfoEntityidInfoEntity();
+                phoneCollectionPhone.setInfoEntityidInfoEntity(company);
+                phoneCollectionPhone = em.merge(phoneCollectionPhone);
+                if (oldInfoEntityidInfoEntityOfPhoneCollectionPhone != null) {
+                    oldInfoEntityidInfoEntityOfPhoneCollectionPhone.getPhoneCollection().remove(phoneCollectionPhone);
+                    oldInfoEntityidInfoEntityOfPhoneCollectionPhone = em.merge(oldInfoEntityidInfoEntityOfPhoneCollectionPhone);
                 }
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findCompany(company.getIdCompany()) != null) {
+            if (findCompany(company.getId()) != null) {
                 throw new PreexistingEntityException("Company " + company + " already exists.", ex);
             }
             throw ex;
@@ -73,61 +150,7 @@ public class CompanyJpaController implements Serializable {
         }
     }
 
-    public void edit(Company company) throws IllegalOrphanException, NonexistentEntityException, Exception {
-        EntityManager em = null;
-        try {
-            em = getEntityManager();
-            em.getTransaction().begin();
-            Company persistentCompany = em.find(Company.class, company.getIdCompany());
-            Collection<Infoentity> infoentityCollectionOld = persistentCompany.getInfoentityCollection();
-            Collection<Infoentity> infoentityCollectionNew = company.getInfoentityCollection();
-            List<String> illegalOrphanMessages = null;
-            for (Infoentity infoentityCollectionOldInfoentity : infoentityCollectionOld) {
-                if (!infoentityCollectionNew.contains(infoentityCollectionOldInfoentity)) {
-                    if (illegalOrphanMessages == null) {
-                        illegalOrphanMessages = new ArrayList<String>();
-                    }
-                    illegalOrphanMessages.add("You must retain Infoentity " + infoentityCollectionOldInfoentity + " since its company field is not nullable.");
-                }
-            }
-            if (illegalOrphanMessages != null) {
-                throw new IllegalOrphanException(illegalOrphanMessages);
-            }
-            Collection<Infoentity> attachedInfoentityCollectionNew = new ArrayList<Infoentity>();
-            for (Infoentity infoentityCollectionNewInfoentityToAttach : infoentityCollectionNew) {
-                infoentityCollectionNewInfoentityToAttach = em.getReference(infoentityCollectionNewInfoentityToAttach.getClass(), infoentityCollectionNewInfoentityToAttach.getInfoentityPK());
-                attachedInfoentityCollectionNew.add(infoentityCollectionNewInfoentityToAttach);
-            }
-            infoentityCollectionNew = attachedInfoentityCollectionNew;
-            company.setInfoentityCollection(infoentityCollectionNew);
-            company = em.merge(company);
-            for (Infoentity infoentityCollectionNewInfoentity : infoentityCollectionNew) {
-                if (!infoentityCollectionOld.contains(infoentityCollectionNewInfoentity)) {
-                    Company oldCompanyOfInfoentityCollectionNewInfoentity = infoentityCollectionNewInfoentity.getCompany();
-                    infoentityCollectionNewInfoentity.setCompany(company);
-                    infoentityCollectionNewInfoentity = em.merge(infoentityCollectionNewInfoentity);
-                    if (oldCompanyOfInfoentityCollectionNewInfoentity != null && !oldCompanyOfInfoentityCollectionNewInfoentity.equals(company)) {
-                        oldCompanyOfInfoentityCollectionNewInfoentity.getInfoentityCollection().remove(infoentityCollectionNewInfoentity);
-                        oldCompanyOfInfoentityCollectionNewInfoentity = em.merge(oldCompanyOfInfoentityCollectionNewInfoentity);
-                    }
-                }
-            }
-            em.getTransaction().commit();
-        } catch (Exception ex) {
-            String msg = ex.getLocalizedMessage();
-            if (msg == null || msg.length() == 0) {
-                Integer id = company.getIdCompany();
-                if (findCompany(id) == null) {
-                    throw new NonexistentEntityException("The company with id " + id + " no longer exists.");
-                }
-            }
-            throw ex;
-        } finally {
-            if (em != null) {
-                em.close();
-            }
-        }
-    }
+    
 
     public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
         EntityManager em = null;
@@ -137,20 +160,47 @@ public class CompanyJpaController implements Serializable {
             Company company;
             try {
                 company = em.getReference(Company.class, id);
-                company.getIdCompany();
+                company.getId();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The company with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
-            Collection<Infoentity> infoentityCollectionOrphanCheck = company.getInfoentityCollection();
-            for (Infoentity infoentityCollectionOrphanCheckInfoentity : infoentityCollectionOrphanCheck) {
+            Person personOrphanCheck = company.getPerson();
+            if (personOrphanCheck != null) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Company (" + company + ") cannot be destroyed since the Infoentity " + infoentityCollectionOrphanCheckInfoentity + " in its infoentityCollection field has a non-nullable company field.");
+                illegalOrphanMessages.add("This Company (" + company + ") cannot be destroyed since the Person " + personOrphanCheck + " in its person field has a non-nullable infoentity field.");
+            }
+            Company companyOrphanCheck = company.getCompany();
+            if (companyOrphanCheck != null) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This Company (" + company + ") cannot be destroyed since the Company " + companyOrphanCheck + " in its company field has a non-nullable infoentity field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
+            }
+            Infoentity infoentity = company.getInfoentity();
+            if (infoentity != null) {
+                infoentity.setCompany(null);
+                infoentity = em.merge(infoentity);
+            }
+            Address addressidAddress = company.getAddressidAddress();
+            if (addressidAddress != null) {
+                addressidAddress.getInfoentityCollection().remove(company);
+                addressidAddress = em.merge(addressidAddress);
+            }
+            Collection<Hobby> hobbyCollection = company.getHobbyCollection();
+            for (Hobby hobbyCollectionHobby : hobbyCollection) {
+                hobbyCollectionHobby.getInfoentityCollection().remove(company);
+                hobbyCollectionHobby = em.merge(hobbyCollectionHobby);
+            }
+            Collection<Phone> phoneCollection = company.getPhoneCollection();
+            for (Phone phoneCollectionPhone : phoneCollection) {
+                phoneCollectionPhone.setInfoEntityidInfoEntity(null);
+                phoneCollectionPhone = em.merge(phoneCollectionPhone);
             }
             em.remove(company);
             em.getTransaction().commit();

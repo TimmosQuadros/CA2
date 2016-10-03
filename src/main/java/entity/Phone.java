@@ -29,8 +29,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Phone.findAll", query = "SELECT p FROM Phone p"),
     @NamedQuery(name = "Phone.findByIdPhone", query = "SELECT p FROM Phone p WHERE p.idPhone = :idPhone"),
-    @NamedQuery(name = "Phone.findByNumber", query = "SELECT p FROM Phone p WHERE p.number = :number"),
-    @NamedQuery(name = "Phone.findByDescription", query = "SELECT p FROM Phone p WHERE p.description = :description")})
+    @NamedQuery(name = "Phone.findByDescription", query = "SELECT p FROM Phone p WHERE p.description = :description"),
+    @NamedQuery(name = "Phone.findByNumber", query = "SELECT p FROM Phone p WHERE p.number = :number")})
 public class Phone implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -39,13 +39,13 @@ public class Phone implements Serializable {
     @NotNull
     @Column(name = "idPhone")
     private Integer idPhone;
-    @Column(name = "number")
-    private Integer number;
-    @Size(max = 45)
+    @Size(max = 255)
     @Column(name = "description")
     private String description;
-    @JoinColumn(name = "InfoEntity_idInfoEntity", referencedColumnName = "idInfoEntity")
-    @ManyToOne(optional = false)
+    @Column(name = "number")
+    private Integer number;
+    @JoinColumn(name = "InfoEntity_idInfoEntity", referencedColumnName = "ID")
+    @ManyToOne
     private Infoentity infoEntityidInfoEntity;
 
     public Phone() {
@@ -63,20 +63,20 @@ public class Phone implements Serializable {
         this.idPhone = idPhone;
     }
 
-    public Integer getNumber() {
-        return number;
-    }
-
-    public void setNumber(Integer number) {
-        this.number = number;
-    }
-
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
     }
 
     public Infoentity getInfoEntityidInfoEntity() {

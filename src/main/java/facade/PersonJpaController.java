@@ -10,11 +10,14 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import entity.Infoentity;
+import entity.Person;
+import entity.Company;
+import entity.Address;
 import entity.Hobby;
 import java.util.ArrayList;
 import java.util.Collection;
-import entity.Infoentity;
-import entity.Person;
+import entity.Phone;
 import facade.exceptions.IllegalOrphanException;
 import facade.exceptions.NonexistentEntityException;
 import facade.exceptions.PreexistingEntityException;
@@ -37,124 +40,107 @@ public class PersonJpaController implements Serializable {
         return emf.createEntityManager();
     }
 
-    public void create(Person person) throws PreexistingEntityException, Exception {
+    public void create(Person person) throws IllegalOrphanException, PreexistingEntityException, Exception {
         if (person.getHobbyCollection() == null) {
             person.setHobbyCollection(new ArrayList<Hobby>());
         }
-        if (person.getInfoentityCollection() == null) {
-            person.setInfoentityCollection(new ArrayList<Infoentity>());
+        if (person.getPhoneCollection() == null) {
+            person.setPhoneCollection(new ArrayList<Phone>());
+        }
+        List<String> illegalOrphanMessages = null;
+        Infoentity infoentityOrphanCheck = person.getInfoentity();
+        if (infoentityOrphanCheck != null) {
+            Person oldPersonOfInfoentity = infoentityOrphanCheck.getPerson();
+            if (oldPersonOfInfoentity != null) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("The Infoentity " + infoentityOrphanCheck + " already has an item of type Person whose infoentity column cannot be null. Please make another selection for the infoentity field.");
+            }
+        }
+        if (illegalOrphanMessages != null) {
+            throw new IllegalOrphanException(illegalOrphanMessages);
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
+            Infoentity infoentity = person.getInfoentity();
+            if (infoentity != null) {
+                infoentity = em.getReference(infoentity.getClass(), infoentity.getId());
+                person.setInfoentity(infoentity);
+            }
+            Person personRel = person.getPerson();
+            if (personRel != null) {
+                personRel = em.getReference(personRel.getClass(), personRel.getId());
+                person.setPerson(personRel);
+            }
+            Company company = person.getCompany();
+            if (company != null) {
+                company = em.getReference(company.getClass(), company.getId());
+                person.setCompany(company);
+            }
+            Address addressidAddress = person.getAddressidAddress();
+            if (addressidAddress != null) {
+                addressidAddress = em.getReference(addressidAddress.getClass(), addressidAddress.getIdAddress());
+                person.setAddressidAddress(addressidAddress);
+            }
             Collection<Hobby> attachedHobbyCollection = new ArrayList<Hobby>();
             for (Hobby hobbyCollectionHobbyToAttach : person.getHobbyCollection()) {
                 hobbyCollectionHobbyToAttach = em.getReference(hobbyCollectionHobbyToAttach.getClass(), hobbyCollectionHobbyToAttach.getIdHobby());
                 attachedHobbyCollection.add(hobbyCollectionHobbyToAttach);
             }
             person.setHobbyCollection(attachedHobbyCollection);
-            Collection<Infoentity> attachedInfoentityCollection = new ArrayList<Infoentity>();
-            for (Infoentity infoentityCollectionInfoentityToAttach : person.getInfoentityCollection()) {
-                infoentityCollectionInfoentityToAttach = em.getReference(infoentityCollectionInfoentityToAttach.getClass(), infoentityCollectionInfoentityToAttach.getInfoentityPK());
-                attachedInfoentityCollection.add(infoentityCollectionInfoentityToAttach);
+            Collection<Phone> attachedPhoneCollection = new ArrayList<Phone>();
+            for (Phone phoneCollectionPhoneToAttach : person.getPhoneCollection()) {
+                phoneCollectionPhoneToAttach = em.getReference(phoneCollectionPhoneToAttach.getClass(), phoneCollectionPhoneToAttach.getIdPhone());
+                attachedPhoneCollection.add(phoneCollectionPhoneToAttach);
             }
-            person.setInfoentityCollection(attachedInfoentityCollection);
+            person.setPhoneCollection(attachedPhoneCollection);
             em.persist(person);
+            if (infoentity != null) {
+                infoentity.setPerson(person);
+                infoentity = em.merge(infoentity);
+            }
+            if (personRel != null) {
+                entity.Infoentity oldInfoentityOfPersonRel = personRel.getInfoentity();
+                if (oldInfoentityOfPersonRel != null) {
+                    oldInfoentityOfPersonRel.setPerson(null);
+                    oldInfoentityOfPersonRel = em.merge(oldInfoentityOfPersonRel);
+                }
+                personRel.setInfoentity(person);
+                personRel = em.merge(personRel);
+            }
+            if (company != null) {
+                entity.Infoentity oldInfoentityOfCompany = company.getInfoentity();
+                if (oldInfoentityOfCompany != null) {
+                    oldInfoentityOfCompany.setCompany(null);
+                    oldInfoentityOfCompany = em.merge(oldInfoentityOfCompany);
+                }
+                company.setInfoentity(person);
+                company = em.merge(company);
+            }
+            if (addressidAddress != null) {
+                addressidAddress.getInfoentityCollection().add(person);
+                addressidAddress = em.merge(addressidAddress);
+            }
             for (Hobby hobbyCollectionHobby : person.getHobbyCollection()) {
-                hobbyCollectionHobby.getPersonCollection().add(person);
+                hobbyCollectionHobby.getInfoentityCollection().add(person);
                 hobbyCollectionHobby = em.merge(hobbyCollectionHobby);
             }
-            for (Infoentity infoentityCollectionInfoentity : person.getInfoentityCollection()) {
-                Person oldPersonOfInfoentityCollectionInfoentity = infoentityCollectionInfoentity.getPerson();
-                infoentityCollectionInfoentity.setPerson(person);
-                infoentityCollectionInfoentity = em.merge(infoentityCollectionInfoentity);
-                if (oldPersonOfInfoentityCollectionInfoentity != null) {
-                    oldPersonOfInfoentityCollectionInfoentity.getInfoentityCollection().remove(infoentityCollectionInfoentity);
-                    oldPersonOfInfoentityCollectionInfoentity = em.merge(oldPersonOfInfoentityCollectionInfoentity);
+            for (Phone phoneCollectionPhone : person.getPhoneCollection()) {
+                entity.Infoentity oldInfoEntityidInfoEntityOfPhoneCollectionPhone = phoneCollectionPhone.getInfoEntityidInfoEntity();
+                phoneCollectionPhone.setInfoEntityidInfoEntity(person);
+                phoneCollectionPhone = em.merge(phoneCollectionPhone);
+                if (oldInfoEntityidInfoEntityOfPhoneCollectionPhone != null) {
+                    oldInfoEntityidInfoEntityOfPhoneCollectionPhone.getPhoneCollection().remove(phoneCollectionPhone);
+                    oldInfoEntityidInfoEntityOfPhoneCollectionPhone = em.merge(oldInfoEntityidInfoEntityOfPhoneCollectionPhone);
                 }
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
-            if (findPerson(person.getIdPerson()) != null) {
+            if (findPerson(person.getId()) != null) {
                 throw new PreexistingEntityException("Person " + person + " already exists.", ex);
-            }
-            throw ex;
-        } finally {
-            if (em != null) {
-                em.close();
-            }
-        }
-    }
-
-    public void edit(Person person) throws IllegalOrphanException, NonexistentEntityException, Exception {
-        EntityManager em = null;
-        try {
-            em = getEntityManager();
-            em.getTransaction().begin();
-            Person persistentPerson = em.find(Person.class, person.getIdPerson());
-            Collection<Hobby> hobbyCollectionOld = persistentPerson.getHobbyCollection();
-            Collection<Hobby> hobbyCollectionNew = person.getHobbyCollection();
-            Collection<Infoentity> infoentityCollectionOld = persistentPerson.getInfoentityCollection();
-            Collection<Infoentity> infoentityCollectionNew = person.getInfoentityCollection();
-            List<String> illegalOrphanMessages = null;
-            for (Infoentity infoentityCollectionOldInfoentity : infoentityCollectionOld) {
-                if (!infoentityCollectionNew.contains(infoentityCollectionOldInfoentity)) {
-                    if (illegalOrphanMessages == null) {
-                        illegalOrphanMessages = new ArrayList<String>();
-                    }
-                    illegalOrphanMessages.add("You must retain Infoentity " + infoentityCollectionOldInfoentity + " since its person field is not nullable.");
-                }
-            }
-            if (illegalOrphanMessages != null) {
-                throw new IllegalOrphanException(illegalOrphanMessages);
-            }
-            Collection<Hobby> attachedHobbyCollectionNew = new ArrayList<Hobby>();
-            for (Hobby hobbyCollectionNewHobbyToAttach : hobbyCollectionNew) {
-                hobbyCollectionNewHobbyToAttach = em.getReference(hobbyCollectionNewHobbyToAttach.getClass(), hobbyCollectionNewHobbyToAttach.getIdHobby());
-                attachedHobbyCollectionNew.add(hobbyCollectionNewHobbyToAttach);
-            }
-            hobbyCollectionNew = attachedHobbyCollectionNew;
-            person.setHobbyCollection(hobbyCollectionNew);
-            Collection<Infoentity> attachedInfoentityCollectionNew = new ArrayList<Infoentity>();
-            for (Infoentity infoentityCollectionNewInfoentityToAttach : infoentityCollectionNew) {
-                infoentityCollectionNewInfoentityToAttach = em.getReference(infoentityCollectionNewInfoentityToAttach.getClass(), infoentityCollectionNewInfoentityToAttach.getInfoentityPK());
-                attachedInfoentityCollectionNew.add(infoentityCollectionNewInfoentityToAttach);
-            }
-            infoentityCollectionNew = attachedInfoentityCollectionNew;
-            person.setInfoentityCollection(infoentityCollectionNew);
-            person = em.merge(person);
-            for (Hobby hobbyCollectionOldHobby : hobbyCollectionOld) {
-                if (!hobbyCollectionNew.contains(hobbyCollectionOldHobby)) {
-                    hobbyCollectionOldHobby.getPersonCollection().remove(person);
-                    hobbyCollectionOldHobby = em.merge(hobbyCollectionOldHobby);
-                }
-            }
-            for (Hobby hobbyCollectionNewHobby : hobbyCollectionNew) {
-                if (!hobbyCollectionOld.contains(hobbyCollectionNewHobby)) {
-                    hobbyCollectionNewHobby.getPersonCollection().add(person);
-                    hobbyCollectionNewHobby = em.merge(hobbyCollectionNewHobby);
-                }
-            }
-            for (Infoentity infoentityCollectionNewInfoentity : infoentityCollectionNew) {
-                if (!infoentityCollectionOld.contains(infoentityCollectionNewInfoentity)) {
-                    Person oldPersonOfInfoentityCollectionNewInfoentity = infoentityCollectionNewInfoentity.getPerson();
-                    infoentityCollectionNewInfoentity.setPerson(person);
-                    infoentityCollectionNewInfoentity = em.merge(infoentityCollectionNewInfoentity);
-                    if (oldPersonOfInfoentityCollectionNewInfoentity != null && !oldPersonOfInfoentityCollectionNewInfoentity.equals(person)) {
-                        oldPersonOfInfoentityCollectionNewInfoentity.getInfoentityCollection().remove(infoentityCollectionNewInfoentity);
-                        oldPersonOfInfoentityCollectionNewInfoentity = em.merge(oldPersonOfInfoentityCollectionNewInfoentity);
-                    }
-                }
-            }
-            em.getTransaction().commit();
-        } catch (Exception ex) {
-            String msg = ex.getLocalizedMessage();
-            if (msg == null || msg.length() == 0) {
-                Integer id = person.getIdPerson();
-                if (findPerson(id) == null) {
-                    throw new NonexistentEntityException("The person with id " + id + " no longer exists.");
-                }
             }
             throw ex;
         } finally {
@@ -172,25 +158,47 @@ public class PersonJpaController implements Serializable {
             Person person;
             try {
                 person = em.getReference(Person.class, id);
-                person.getIdPerson();
+                person.getId();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The person with id " + id + " no longer exists.", enfe);
             }
             List<String> illegalOrphanMessages = null;
-            Collection<Infoentity> infoentityCollectionOrphanCheck = person.getInfoentityCollection();
-            for (Infoentity infoentityCollectionOrphanCheckInfoentity : infoentityCollectionOrphanCheck) {
+            Person personOrphanCheck = person.getPerson();
+            if (personOrphanCheck != null) {
                 if (illegalOrphanMessages == null) {
                     illegalOrphanMessages = new ArrayList<String>();
                 }
-                illegalOrphanMessages.add("This Person (" + person + ") cannot be destroyed since the Infoentity " + infoentityCollectionOrphanCheckInfoentity + " in its infoentityCollection field has a non-nullable person field.");
+                illegalOrphanMessages.add("This Person (" + person + ") cannot be destroyed since the Person " + personOrphanCheck + " in its person field has a non-nullable infoentity field.");
+            }
+            Company companyOrphanCheck = person.getCompany();
+            if (companyOrphanCheck != null) {
+                if (illegalOrphanMessages == null) {
+                    illegalOrphanMessages = new ArrayList<String>();
+                }
+                illegalOrphanMessages.add("This Person (" + person + ") cannot be destroyed since the Company " + companyOrphanCheck + " in its company field has a non-nullable infoentity field.");
             }
             if (illegalOrphanMessages != null) {
                 throw new IllegalOrphanException(illegalOrphanMessages);
             }
+            Infoentity infoentity = person.getInfoentity();
+            if (infoentity != null) {
+                infoentity.setPerson(null);
+                infoentity = em.merge(infoentity);
+            }
+            Address addressidAddress = person.getAddressidAddress();
+            if (addressidAddress != null) {
+                addressidAddress.getInfoentityCollection().remove(person);
+                addressidAddress = em.merge(addressidAddress);
+            }
             Collection<Hobby> hobbyCollection = person.getHobbyCollection();
             for (Hobby hobbyCollectionHobby : hobbyCollection) {
-                hobbyCollectionHobby.getPersonCollection().remove(person);
+                hobbyCollectionHobby.getInfoentityCollection().remove(person);
                 hobbyCollectionHobby = em.merge(hobbyCollectionHobby);
+            }
+            Collection<Phone> phoneCollection = person.getPhoneCollection();
+            for (Phone phoneCollectionPhone : phoneCollection) {
+                phoneCollectionPhone.setInfoEntityidInfoEntity(null);
+                phoneCollectionPhone = em.merge(phoneCollectionPhone);
             }
             em.remove(person);
             em.getTransaction().commit();

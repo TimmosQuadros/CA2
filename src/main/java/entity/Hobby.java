@@ -32,8 +32,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Hobby.findAll", query = "SELECT h FROM Hobby h"),
     @NamedQuery(name = "Hobby.findByIdHobby", query = "SELECT h FROM Hobby h WHERE h.idHobby = :idHobby"),
-    @NamedQuery(name = "Hobby.findByName", query = "SELECT h FROM Hobby h WHERE h.name = :name"),
-    @NamedQuery(name = "Hobby.findByDescription", query = "SELECT h FROM Hobby h WHERE h.description = :description")})
+    @NamedQuery(name = "Hobby.findByDescription", query = "SELECT h FROM Hobby h WHERE h.description = :description"),
+    @NamedQuery(name = "Hobby.findByName", query = "SELECT h FROM Hobby h WHERE h.name = :name")})
 public class Hobby implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -42,17 +42,17 @@ public class Hobby implements Serializable {
     @NotNull
     @Column(name = "idHobby")
     private Integer idHobby;
-    @Size(max = 45)
-    @Column(name = "name")
-    private String name;
-    @Size(max = 45)
+    @Size(max = 255)
     @Column(name = "description")
     private String description;
+    @Size(max = 255)
+    @Column(name = "name")
+    private String name;
     @JoinTable(name = "hobby_has_person", joinColumns = {
         @JoinColumn(name = "Hobby_idHobby", referencedColumnName = "idHobby")}, inverseJoinColumns = {
-        @JoinColumn(name = "Person_idPerson", referencedColumnName = "idPerson")})
+        @JoinColumn(name = "Person_ID", referencedColumnName = "ID")})
     @ManyToMany
-    private Collection<Person> personCollection;
+    private Collection<Infoentity> infoentityCollection;
 
     public Hobby() {
     }
@@ -69,14 +69,6 @@ public class Hobby implements Serializable {
         this.idHobby = idHobby;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -85,13 +77,21 @@ public class Hobby implements Serializable {
         this.description = description;
     }
 
-    @XmlTransient
-    public Collection<Person> getPersonCollection() {
-        return personCollection;
+    public String getName() {
+        return name;
     }
 
-    public void setPersonCollection(Collection<Person> personCollection) {
-        this.personCollection = personCollection;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @XmlTransient
+    public Collection<Infoentity> getInfoentityCollection() {
+        return infoentityCollection;
+    }
+
+    public void setInfoentityCollection(Collection<Infoentity> infoentityCollection) {
+        this.infoentityCollection = infoentityCollection;
     }
 
     @Override

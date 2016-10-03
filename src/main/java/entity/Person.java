@@ -6,21 +6,18 @@
 package entity;
 
 import java.io.Serializable;
-import java.util.Collection;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -31,41 +28,40 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Person.findAll", query = "SELECT p FROM Person p"),
-    @NamedQuery(name = "Person.findByIdPerson", query = "SELECT p FROM Person p WHERE p.idPerson = :idPerson"),
+    @NamedQuery(name = "Person.findById", query = "SELECT p FROM Person p WHERE p.id = :id"),
     @NamedQuery(name = "Person.findByFirstName", query = "SELECT p FROM Person p WHERE p.firstName = :firstName"),
     @NamedQuery(name = "Person.findByLastName", query = "SELECT p FROM Person p WHERE p.lastName = :lastName")})
-public class Person implements Serializable {
+public class Person extends Infoentity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @NotNull
-    @Column(name = "idPerson")
-    private Integer idPerson;
-    @Size(max = 45)
+    @Column(name = "ID")
+    private Integer id;
+    @Size(max = 255)
     @Column(name = "firstName")
     private String firstName;
-    @Size(max = 45)
+    @Size(max = 255)
     @Column(name = "lastName")
     private String lastName;
-    @ManyToMany(mappedBy = "personCollection")
-    private Collection<Hobby> hobbyCollection;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "person")
-    private Collection<Infoentity> infoentityCollection;
+    @JoinColumn(name = "ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @OneToOne(optional = false)
+    private Infoentity infoentity;
 
     public Person() {
     }
 
-    public Person(Integer idPerson) {
-        this.idPerson = idPerson;
+    public Person(Integer id) {
+        this.id = id;
     }
 
-    public Integer getIdPerson() {
-        return idPerson;
+    public Integer getId() {
+        return id;
     }
 
-    public void setIdPerson(Integer idPerson) {
-        this.idPerson = idPerson;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -84,28 +80,18 @@ public class Person implements Serializable {
         this.lastName = lastName;
     }
 
-    @XmlTransient
-    public Collection<Hobby> getHobbyCollection() {
-        return hobbyCollection;
+    public Infoentity getInfoentity() {
+        return infoentity;
     }
 
-    public void setHobbyCollection(Collection<Hobby> hobbyCollection) {
-        this.hobbyCollection = hobbyCollection;
-    }
-
-    @XmlTransient
-    public Collection<Infoentity> getInfoentityCollection() {
-        return infoentityCollection;
-    }
-
-    public void setInfoentityCollection(Collection<Infoentity> infoentityCollection) {
-        this.infoentityCollection = infoentityCollection;
+    public void setInfoentity(Infoentity infoentity) {
+        this.infoentity = infoentity;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (idPerson != null ? idPerson.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -116,7 +102,7 @@ public class Person implements Serializable {
             return false;
         }
         Person other = (Person) object;
-        if ((this.idPerson == null && other.idPerson != null) || (this.idPerson != null && !this.idPerson.equals(other.idPerson))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -124,7 +110,7 @@ public class Person implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.Person[ idPerson=" + idPerson + " ]";
+        return "entity.Person[ id=" + id + " ]";
     }
     
 }

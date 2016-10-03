@@ -52,7 +52,7 @@ public class AddressJpaController implements Serializable {
             }
             Collection<Infoentity> attachedInfoentityCollection = new ArrayList<Infoentity>();
             for (Infoentity infoentityCollectionInfoentityToAttach : address.getInfoentityCollection()) {
-                infoentityCollectionInfoentityToAttach = em.getReference(infoentityCollectionInfoentityToAttach.getClass(), infoentityCollectionInfoentityToAttach.getInfoentityPK());
+                infoentityCollectionInfoentityToAttach = em.getReference(infoentityCollectionInfoentityToAttach.getClass(), infoentityCollectionInfoentityToAttach.getId());
                 attachedInfoentityCollection.add(infoentityCollectionInfoentityToAttach);
             }
             address.setInfoentityCollection(attachedInfoentityCollection);
@@ -111,7 +111,7 @@ public class AddressJpaController implements Serializable {
             }
             Collection<Infoentity> attachedInfoentityCollectionNew = new ArrayList<Infoentity>();
             for (Infoentity infoentityCollectionNewInfoentityToAttach : infoentityCollectionNew) {
-                infoentityCollectionNewInfoentityToAttach = em.getReference(infoentityCollectionNewInfoentityToAttach.getClass(), infoentityCollectionNewInfoentityToAttach.getInfoentityPK());
+                infoentityCollectionNewInfoentityToAttach = em.getReference(infoentityCollectionNewInfoentityToAttach.getClass(), infoentityCollectionNewInfoentityToAttach.getId());
                 attachedInfoentityCollectionNew.add(infoentityCollectionNewInfoentityToAttach);
             }
             infoentityCollectionNew = attachedInfoentityCollectionNew;

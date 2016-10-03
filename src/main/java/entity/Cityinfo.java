@@ -8,7 +8,6 @@ package entity;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -31,8 +30,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Cityinfo.findAll", query = "SELECT c FROM Cityinfo c"),
     @NamedQuery(name = "Cityinfo.findByIdCityinfo", query = "SELECT c FROM Cityinfo c WHERE c.idCityinfo = :idCityinfo"),
-    @NamedQuery(name = "Cityinfo.findByZip", query = "SELECT c FROM Cityinfo c WHERE c.zip = :zip"),
-    @NamedQuery(name = "Cityinfo.findByCity", query = "SELECT c FROM Cityinfo c WHERE c.city = :city")})
+    @NamedQuery(name = "Cityinfo.findByCity", query = "SELECT c FROM Cityinfo c WHERE c.city = :city"),
+    @NamedQuery(name = "Cityinfo.findByZip", query = "SELECT c FROM Cityinfo c WHERE c.zip = :zip")})
 public class Cityinfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -41,12 +40,12 @@ public class Cityinfo implements Serializable {
     @NotNull
     @Column(name = "idCityinfo")
     private Integer idCityinfo;
-    @Column(name = "Zip")
-    private Integer zip;
-    @Size(max = 45)
+    @Size(max = 255)
     @Column(name = "City")
     private String city;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cityinfoidCityinfo")
+    @Column(name = "Zip")
+    private Integer zip;
+    @OneToMany(mappedBy = "cityinfoidCityinfo")
     private Collection<Address> addressCollection;
 
     public Cityinfo() {
@@ -64,20 +63,20 @@ public class Cityinfo implements Serializable {
         this.idCityinfo = idCityinfo;
     }
 
-    public Integer getZip() {
-        return zip;
-    }
-
-    public void setZip(Integer zip) {
-        this.zip = zip;
-    }
-
     public String getCity() {
         return city;
     }
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public Integer getZip() {
+        return zip;
+    }
+
+    public void setZip(Integer zip) {
+        this.zip = zip;
     }
 
     @XmlTransient

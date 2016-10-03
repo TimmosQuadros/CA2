@@ -33,8 +33,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Address.findAll", query = "SELECT a FROM Address a"),
     @NamedQuery(name = "Address.findByIdAddress", query = "SELECT a FROM Address a WHERE a.idAddress = :idAddress"),
-    @NamedQuery(name = "Address.findByStreet", query = "SELECT a FROM Address a WHERE a.street = :street"),
-    @NamedQuery(name = "Address.findByAdditionalInfo", query = "SELECT a FROM Address a WHERE a.additionalInfo = :additionalInfo")})
+    @NamedQuery(name = "Address.findByAdditionalInfo", query = "SELECT a FROM Address a WHERE a.additionalInfo = :additionalInfo"),
+    @NamedQuery(name = "Address.findByStreet", query = "SELECT a FROM Address a WHERE a.street = :street")})
 public class Address implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -43,14 +43,14 @@ public class Address implements Serializable {
     @NotNull
     @Column(name = "idAddress")
     private Integer idAddress;
-    @Size(max = 45)
-    @Column(name = "street")
-    private String street;
-    @Size(max = 45)
+    @Size(max = 255)
     @Column(name = "additionalInfo")
     private String additionalInfo;
+    @Size(max = 255)
+    @Column(name = "street")
+    private String street;
     @JoinColumn(name = "Cityinfo_idCityinfo", referencedColumnName = "idCityinfo")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Cityinfo cityinfoidCityinfo;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "addressidAddress")
     private Collection<Infoentity> infoentityCollection;
@@ -70,20 +70,20 @@ public class Address implements Serializable {
         this.idAddress = idAddress;
     }
 
-    public String getStreet() {
-        return street;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
     public String getAdditionalInfo() {
         return additionalInfo;
     }
 
     public void setAdditionalInfo(String additionalInfo) {
         this.additionalInfo = additionalInfo;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
     }
 
     public Cityinfo getCityinfoidCityinfo() {

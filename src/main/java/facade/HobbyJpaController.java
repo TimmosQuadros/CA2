@@ -11,7 +11,7 @@ import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import entity.Person;
+import entity.Infoentity;
 import facade.exceptions.NonexistentEntityException;
 import facade.exceptions.PreexistingEntityException;
 import java.util.ArrayList;
@@ -36,23 +36,23 @@ public class HobbyJpaController implements Serializable {
     }
 
     public void create(Hobby hobby) throws PreexistingEntityException, Exception {
-        if (hobby.getPersonCollection() == null) {
-            hobby.setPersonCollection(new ArrayList<Person>());
+        if (hobby.getInfoentityCollection() == null) {
+            hobby.setInfoentityCollection(new ArrayList<Infoentity>());
         }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Collection<Person> attachedPersonCollection = new ArrayList<Person>();
-            for (Person personCollectionPersonToAttach : hobby.getPersonCollection()) {
-                personCollectionPersonToAttach = em.getReference(personCollectionPersonToAttach.getClass(), personCollectionPersonToAttach.getIdPerson());
-                attachedPersonCollection.add(personCollectionPersonToAttach);
+            Collection<Infoentity> attachedInfoentityCollection = new ArrayList<Infoentity>();
+            for (Infoentity infoentityCollectionInfoentityToAttach : hobby.getInfoentityCollection()) {
+                infoentityCollectionInfoentityToAttach = em.getReference(infoentityCollectionInfoentityToAttach.getClass(), infoentityCollectionInfoentityToAttach.getId());
+                attachedInfoentityCollection.add(infoentityCollectionInfoentityToAttach);
             }
-            hobby.setPersonCollection(attachedPersonCollection);
+            hobby.setInfoentityCollection(attachedInfoentityCollection);
             em.persist(hobby);
-            for (Person personCollectionPerson : hobby.getPersonCollection()) {
-                personCollectionPerson.getHobbyCollection().add(hobby);
-                personCollectionPerson = em.merge(personCollectionPerson);
+            for (Infoentity infoentityCollectionInfoentity : hobby.getInfoentityCollection()) {
+                infoentityCollectionInfoentity.getHobbyCollection().add(hobby);
+                infoentityCollectionInfoentity = em.merge(infoentityCollectionInfoentity);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
@@ -73,26 +73,26 @@ public class HobbyJpaController implements Serializable {
             em = getEntityManager();
             em.getTransaction().begin();
             Hobby persistentHobby = em.find(Hobby.class, hobby.getIdHobby());
-            Collection<Person> personCollectionOld = persistentHobby.getPersonCollection();
-            Collection<Person> personCollectionNew = hobby.getPersonCollection();
-            Collection<Person> attachedPersonCollectionNew = new ArrayList<Person>();
-            for (Person personCollectionNewPersonToAttach : personCollectionNew) {
-                personCollectionNewPersonToAttach = em.getReference(personCollectionNewPersonToAttach.getClass(), personCollectionNewPersonToAttach.getIdPerson());
-                attachedPersonCollectionNew.add(personCollectionNewPersonToAttach);
+            Collection<Infoentity> infoentityCollectionOld = persistentHobby.getInfoentityCollection();
+            Collection<Infoentity> infoentityCollectionNew = hobby.getInfoentityCollection();
+            Collection<Infoentity> attachedInfoentityCollectionNew = new ArrayList<Infoentity>();
+            for (Infoentity infoentityCollectionNewInfoentityToAttach : infoentityCollectionNew) {
+                infoentityCollectionNewInfoentityToAttach = em.getReference(infoentityCollectionNewInfoentityToAttach.getClass(), infoentityCollectionNewInfoentityToAttach.getId());
+                attachedInfoentityCollectionNew.add(infoentityCollectionNewInfoentityToAttach);
             }
-            personCollectionNew = attachedPersonCollectionNew;
-            hobby.setPersonCollection(personCollectionNew);
+            infoentityCollectionNew = attachedInfoentityCollectionNew;
+            hobby.setInfoentityCollection(infoentityCollectionNew);
             hobby = em.merge(hobby);
-            for (Person personCollectionOldPerson : personCollectionOld) {
-                if (!personCollectionNew.contains(personCollectionOldPerson)) {
-                    personCollectionOldPerson.getHobbyCollection().remove(hobby);
-                    personCollectionOldPerson = em.merge(personCollectionOldPerson);
+            for (Infoentity infoentityCollectionOldInfoentity : infoentityCollectionOld) {
+                if (!infoentityCollectionNew.contains(infoentityCollectionOldInfoentity)) {
+                    infoentityCollectionOldInfoentity.getHobbyCollection().remove(hobby);
+                    infoentityCollectionOldInfoentity = em.merge(infoentityCollectionOldInfoentity);
                 }
             }
-            for (Person personCollectionNewPerson : personCollectionNew) {
-                if (!personCollectionOld.contains(personCollectionNewPerson)) {
-                    personCollectionNewPerson.getHobbyCollection().add(hobby);
-                    personCollectionNewPerson = em.merge(personCollectionNewPerson);
+            for (Infoentity infoentityCollectionNewInfoentity : infoentityCollectionNew) {
+                if (!infoentityCollectionOld.contains(infoentityCollectionNewInfoentity)) {
+                    infoentityCollectionNewInfoentity.getHobbyCollection().add(hobby);
+                    infoentityCollectionNewInfoentity = em.merge(infoentityCollectionNewInfoentity);
                 }
             }
             em.getTransaction().commit();
@@ -124,10 +124,10 @@ public class HobbyJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The hobby with id " + id + " no longer exists.", enfe);
             }
-            Collection<Person> personCollection = hobby.getPersonCollection();
-            for (Person personCollectionPerson : personCollection) {
-                personCollectionPerson.getHobbyCollection().remove(hobby);
-                personCollectionPerson = em.merge(personCollectionPerson);
+            Collection<Infoentity> infoentityCollection = hobby.getInfoentityCollection();
+            for (Infoentity infoentityCollectionInfoentity : infoentityCollection) {
+                infoentityCollectionInfoentity.getHobbyCollection().remove(hobby);
+                infoentityCollectionInfoentity = em.merge(infoentityCollectionInfoentity);
             }
             em.remove(hobby);
             em.getTransaction().commit();

@@ -12,7 +12,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import entity.Address;
 import entity.Cityinfo;
-import facade.exceptions.IllegalOrphanException;
 import facade.exceptions.NonexistentEntityException;
 import facade.exceptions.PreexistingEntityException;
 import java.util.ArrayList;
@@ -73,7 +72,7 @@ public class CityinfoJpaController implements Serializable {
         }
     }
 
-    public void edit(Cityinfo cityinfo) throws IllegalOrphanException, NonexistentEntityException, Exception {
+    public void edit(Cityinfo cityinfo) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -81,18 +80,6 @@ public class CityinfoJpaController implements Serializable {
             Cityinfo persistentCityinfo = em.find(Cityinfo.class, cityinfo.getIdCityinfo());
             Collection<Address> addressCollectionOld = persistentCityinfo.getAddressCollection();
             Collection<Address> addressCollectionNew = cityinfo.getAddressCollection();
-            List<String> illegalOrphanMessages = null;
-            for (Address addressCollectionOldAddress : addressCollectionOld) {
-                if (!addressCollectionNew.contains(addressCollectionOldAddress)) {
-                    if (illegalOrphanMessages == null) {
-                        illegalOrphanMessages = new ArrayList<String>();
-                    }
-                    illegalOrphanMessages.add("You must retain Address " + addressCollectionOldAddress + " since its cityinfoidCityinfo field is not nullable.");
-                }
-            }
-            if (illegalOrphanMessages != null) {
-                throw new IllegalOrphanException(illegalOrphanMessages);
-            }
             Collection<Address> attachedAddressCollectionNew = new ArrayList<Address>();
             for (Address addressCollectionNewAddressToAttach : addressCollectionNew) {
                 addressCollectionNewAddressToAttach = em.getReference(addressCollectionNewAddressToAttach.getClass(), addressCollectionNewAddressToAttach.getIdAddress());
@@ -101,6 +88,12 @@ public class CityinfoJpaController implements Serializable {
             addressCollectionNew = attachedAddressCollectionNew;
             cityinfo.setAddressCollection(addressCollectionNew);
             cityinfo = em.merge(cityinfo);
+            for (Address addressCollectionOldAddress : addressCollectionOld) {
+                if (!addressCollectionNew.contains(addressCollectionOldAddress)) {
+                    addressCollectionOldAddress.setCityinfoidCityinfo(null);
+                    addressCollectionOldAddress = em.merge(addressCollectionOldAddress);
+                }
+            }
             for (Address addressCollectionNewAddress : addressCollectionNew) {
                 if (!addressCollectionOld.contains(addressCollectionNewAddress)) {
                     Cityinfo oldCityinfoidCityinfoOfAddressCollectionNewAddress = addressCollectionNewAddress.getCityinfoidCityinfo();
@@ -129,7 +122,7 @@ public class CityinfoJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
+    public void destroy(Integer id) throws NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -141,16 +134,10 @@ public class CityinfoJpaController implements Serializable {
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The cityinfo with id " + id + " no longer exists.", enfe);
             }
-            List<String> illegalOrphanMessages = null;
-            Collection<Address> addressCollectionOrphanCheck = cityinfo.getAddressCollection();
-            for (Address addressCollectionOrphanCheckAddress : addressCollectionOrphanCheck) {
-                if (illegalOrphanMessages == null) {
-                    illegalOrphanMessages = new ArrayList<String>();
-                }
-                illegalOrphanMessages.add("This Cityinfo (" + cityinfo + ") cannot be destroyed since the Address " + addressCollectionOrphanCheckAddress + " in its addressCollection field has a non-nullable cityinfoidCityinfo field.");
-            }
-            if (illegalOrphanMessages != null) {
-                throw new IllegalOrphanException(illegalOrphanMessages);
+            Collection<Address> addressCollection = cityinfo.getAddressCollection();
+            for (Address addressCollectionAddress : addressCollection) {
+                addressCollectionAddress.setCityinfoidCityinfo(null);
+                addressCollectionAddress = em.merge(addressCollectionAddress);
             }
             em.remove(cityinfo);
             em.getTransaction().commit();
