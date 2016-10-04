@@ -12,6 +12,8 @@ import entity.Hobby;
 import entity.Infoentity;
 import entity.Person;
 import entity.Phone;
+import facade.exceptions.IllegalOrphanException;
+import facade.exceptions.NonexistentEntityException;
 import facade.exceptions.PreexistingEntityException;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
@@ -160,6 +162,15 @@ public class Facade {
     }
     
     //Delete
+    public void deleteAddress(int id) throws IllegalOrphanException, NonexistentEntityException{
+        ajpa.destroy(id);
+    }
+    
+    public void deleteCityInfo(int id) throws NonexistentEntityException{
+        cijpa.destroy(id);
+    }
+    
+    
     
 
 }
