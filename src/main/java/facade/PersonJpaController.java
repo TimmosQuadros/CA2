@@ -254,5 +254,13 @@ public class PersonJpaController implements Serializable {
             em.close();
         }
     }
-    
+    // Peter
+
+    public void edit(Person person) {
+        EntityManager em = getEntityManager();
+        em.getTransaction().begin();
+        em.merge(person);
+        em.getTransaction().commit();
+        em.close();
+    }
 }

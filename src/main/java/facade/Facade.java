@@ -141,8 +141,7 @@ public class Facade {
     }
     
     public void editCompany(Company company) throws Exception{
-        //Not implemented yet
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        cojpa.edit(company);
     }
     
     public void editHobby(Hobby hobby) throws Exception{
@@ -154,7 +153,7 @@ public class Facade {
     }
     
     public void editPerson(Person person){
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        pejpa.edit(person);
     }
     
     public void editPhone(Phone phone) throws Exception{

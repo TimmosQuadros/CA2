@@ -150,8 +150,6 @@ public class CompanyJpaController implements Serializable {
         }
     }
 
-    
-
     public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
         EntityManager em = null;
         try {
@@ -257,4 +255,14 @@ public class CompanyJpaController implements Serializable {
         }
     }
     
+    
+    // PeterBoss
+    public void edit(Company company) {
+        EntityManager em = getEntityManager();
+            em.getTransaction().begin();
+            em.merge(company);
+            em.getTransaction().commit();
+            em.close();
+    }
+
 }
