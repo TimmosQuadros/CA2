@@ -169,7 +169,25 @@ public class Facade {
         cijpa.destroy(id);
     }
     
+    public void deleteCompany(int id) throws IllegalOrphanException, NonexistentEntityException {
+        cojpa.destroy(id);
+    }
     
+    public void deleteHobby(int id) throws NonexistentEntityException {
+        hjpa.destroy(id);
+    }
+    
+    public void deleteInfoentity(int id) throws IllegalOrphanException, NonexistentEntityException {
+        ijpa.destroy(id);
+    }
+    
+    public void deletePerson(int id) throws IllegalOrphanException, NonexistentEntityException {
+        pejpa.destroy(id);
+    }
+    
+    public void deletePhone(int id) throws NonexistentEntityException {
+        phjpa.destroy(id);
+    }
     
 
 }
