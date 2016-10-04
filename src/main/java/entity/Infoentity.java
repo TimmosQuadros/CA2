@@ -11,6 +11,8 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -46,6 +48,7 @@ public class Infoentity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @NotNull
     @Column(name = "ID")
@@ -79,6 +82,20 @@ public class Infoentity implements Serializable {
     public Infoentity(Integer id) {
         this.id = id;
     }
+
+    public Infoentity(String dtype, Integer companyID, String email, Integer personID, Collection<Hobby> hobbyCollection, Person person, Collection<Phone> phoneCollection, Company company, Address addressidAddress) {
+        this.dtype = dtype;
+        this.companyID = companyID;
+        this.email = email;
+        this.personID = personID;
+        this.hobbyCollection = hobbyCollection;
+        this.person = person;
+        this.phoneCollection = phoneCollection;
+        this.company = company;
+        this.addressidAddress = addressidAddress;
+    }
+    
+    
 
     public Integer getId() {
         return id;

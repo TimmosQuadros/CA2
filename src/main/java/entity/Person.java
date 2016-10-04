@@ -9,6 +9,8 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
@@ -35,6 +37,7 @@ public class Person extends Infoentity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @NotNull
     @Column(name = "ID")
@@ -54,6 +57,13 @@ public class Person extends Infoentity implements Serializable {
 
     public Person(Integer id) {
         this.id = id;
+    }
+
+    public Person(Integer id, String firstName, String lastName, Infoentity infoentity) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.infoentity = infoentity;
     }
 
     public Integer getId() {

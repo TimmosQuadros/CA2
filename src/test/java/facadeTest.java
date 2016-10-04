@@ -11,38 +11,42 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import facade.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
  * @author TimmosQuadros
  */
 public class facadeTest {
-    
+
+    Facade fp;
+
     public facadeTest() {
+
+        fp = new Facade(Persistence.createEntityManagerFactory("com.mycompany_CA2_war_1.0-SNAPSHOTPU"));
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         HashMap<String, Object> puproperties = new HashMap();
-        puproperties.put("javax.persistence.sql-load-script-source", "scripts/ClearDB.sql");
+        puproperties.put("com.mycompany_CA2_war_1.0-SNAPSHOTPU", "scripts/ClearDB.sql");
         Persistence.generateSchema("mydb", puproperties);
-        Persistence.generateSchema("mydb", null); 
+        Persistence.generateSchema("mydb", null);
 //        fp.setEmf(Persistence.createEntityManagerFactory( "REST1PU_TEST"));
-//        fp.addPerson(new Person("Dan", "Mark", 76543321));
-//        fp.addPerson(new Person("Kaj", "Olsen", 34565432));
-//        fp.addPerson(new Person("Jens", "Madsen", 85858882));
+        fp.createPerson(new Person(1, "Abe", "Abesen", null));
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -50,6 +54,11 @@ public class facadeTest {
     // TODO add test methods here.
     // The methods must be annotated with annotation @Test. For example:
     //
-    // @Test
-    // public void hello() {}
+    @Test
+     public void hello() {
+     
+         Person p = fp.getPerson(1);
+         Person p_test = new Person(1, "Abe", "Abesen", null);
+         assertEquals(p.getFirstName(), p_test.getFirstName());
+     }
 }
