@@ -58,6 +58,13 @@ public class Address implements Serializable {
     public Address() {
     }
 
+    public Address(String additionalInfo, String street, Cityinfo cityinfoidCityinfo, Collection<Infoentity> infoentityCollection) {
+        this.additionalInfo = additionalInfo;
+        this.street = street;
+        this.cityinfoidCityinfo = cityinfoidCityinfo;
+        this.infoentityCollection = infoentityCollection;
+    }
+    
     public Address(Integer idAddress) {
         this.idAddress = idAddress;
     }

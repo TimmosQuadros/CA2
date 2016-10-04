@@ -55,6 +55,12 @@ public class Person extends Infoentity implements Serializable {
     public Person() {
     }
 
+    public Person(String firstName, String lastName, Infoentity infoentity) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.infoentity = infoentity;
+    }
+    
     public Person(Integer id) {
         this.id = id;
     }

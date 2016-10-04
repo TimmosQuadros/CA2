@@ -51,6 +51,12 @@ public class Phone implements Serializable {
     public Phone() {
     }
 
+    public Phone(String description, Integer number, Infoentity infoEntityidInfoEntity) {
+        this.description = description;
+        this.number = number;
+        this.infoEntityidInfoEntity = infoEntityidInfoEntity;
+    }
+
     public Phone(Integer idPhone) {
         this.idPhone = idPhone;
     }
@@ -111,5 +117,5 @@ public class Phone implements Serializable {
     public String toString() {
         return "entity.Phone[ idPhone=" + idPhone + " ]";
     }
-    
+
 }

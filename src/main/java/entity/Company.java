@@ -62,6 +62,15 @@ public class Company extends Infoentity implements Serializable {
     public Company() {
     }
 
+    public Company(Integer cvr, String description, Double marketValue, String name, Integer numEmployees, Infoentity infoentity) {
+        this.cvr = cvr;
+        this.description = description;
+        this.marketValue = marketValue;
+        this.name = name;
+        this.numEmployees = numEmployees;
+        this.infoentity = infoentity;
+    }
+    
     public Company(Integer id) {
         this.id = id;
     }

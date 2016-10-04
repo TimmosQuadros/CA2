@@ -51,6 +51,12 @@ public class Cityinfo implements Serializable {
     public Cityinfo() {
     }
 
+    public Cityinfo(String city, Integer zip, Collection<Address> addressCollection) {
+        this.city = city;
+        this.zip = zip;
+        this.addressCollection = addressCollection;
+    }
+    
     public Cityinfo(Integer idCityinfo) {
         this.idCityinfo = idCityinfo;
     }

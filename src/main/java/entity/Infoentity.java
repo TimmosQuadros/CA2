@@ -78,7 +78,7 @@ public class Infoentity implements Serializable {
 
     public Infoentity() {
     }
-
+    
     public Infoentity(Integer id) {
         this.id = id;
     }
@@ -94,8 +94,6 @@ public class Infoentity implements Serializable {
         this.company = company;
         this.addressidAddress = addressidAddress;
     }
-    
-    
 
     public Integer getId() {
         return id;

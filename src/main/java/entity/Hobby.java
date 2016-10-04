@@ -57,6 +57,12 @@ public class Hobby implements Serializable {
     public Hobby() {
     }
 
+    public Hobby(String description, String name, Collection<Infoentity> infoentityCollection) {
+        this.description = description;
+        this.name = name;
+        this.infoentityCollection = infoentityCollection;
+    }
+    
     public Hobby(Integer idHobby) {
         this.idHobby = idHobby;
     }
