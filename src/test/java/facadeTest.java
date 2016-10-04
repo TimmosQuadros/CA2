@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 
+import entity.Cityinfo;
 import entity.Person;
 import java.util.HashMap;
 import javax.persistence.Persistence;
@@ -13,7 +14,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import facade.*;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
@@ -40,9 +40,9 @@ public class facadeTest {
     @Before
     public void setUp() throws Exception {
         HashMap<String, Object> puproperties = new HashMap();
-        puproperties.put("com.mycompany_CA2_war_1.0-SNAPSHOTPU", "scripts/ClearDB.sql");
-        Persistence.generateSchema("mydb", puproperties);
-        Persistence.generateSchema("mydb", null);
+        //puproperties.put("TESTPU", "scripts/ClearDB.sql");
+        //Persistence.generateSchema("mydb", puproperties);
+        //Persistence.generateSchema("mydb", null);
 //        fp.setEmf(Persistence.createEntityManagerFactory( "REST1PU_TEST"));
         fp.createPerson(new Person(1, "Abe", "Abesen", null));
     }
