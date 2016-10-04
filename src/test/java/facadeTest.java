@@ -53,11 +53,11 @@ public class facadeTest {
     // TODO add test methods here.
     // The methods must be annotated with annotation @Test. For example:
     //
-    @Test
-     public void hello() {
-     
-         Person p = fp.getPerson(1);
-         Person p_test = new Person(1, "Abe", "Abesen", null);
-         assertEquals(p.getFirstName(), p_test.getFirstName());
-     }
+//    @Test
+//     public void hello() {
+//     
+////         Person p = fp.getPerson(1);
+////         Person p_test = new Person(1, "Abe", "Abesen", null);
+////        // assertEquals(p.getFirstName(), p_test.getFirstName());
+//     }
 }
