@@ -26,7 +26,7 @@ public class facadeTest {
 
     public facadeTest() {
 
-        fp = new Facade(Persistence.createEntityManagerFactory("TESTPU"));
+        fp = new Facade(Persistence.createEntityManagerFactory("com.mycompany_CA2_war_1.0-SNAPSHOTPU"));
     }
 
     @BeforeClass
@@ -39,12 +39,11 @@ public class facadeTest {
 
     @Before
     public void setUp() throws Exception {
-        HashMap<String, Object> puproperties = new HashMap();
+        //HashMap<String, Object> puproperties = new HashMap();
         //puproperties.put("TESTPU", "scripts/ClearDB.sql");
         //Persistence.generateSchema("mydb", puproperties);
         //Persistence.generateSchema("mydb", null);
-//        fp.setEmf(Persistence.createEntityManagerFactory( "REST1PU_TEST"));
-//        fp.createPerson(new Person(1, "Abe", "Abesen", null));
+        fp.createPerson(new Person(1, "Abe", "Abesen", null));
     }
 
     @After
